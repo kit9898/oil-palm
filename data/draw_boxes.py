@@ -44,8 +44,8 @@ def main():
                 ymax = int(round(row['ymax']))
                 confidence = float(row['confidence'])
                 
-                # Draw bright green bounding box (BGR format)
-                color = (255, 0, 0)
+                # Draw bright bounding box (BGR format)
+                color = (0, 0, 255) # Red as per the user's earlier preference for bright boxes
                 thickness = 2
                 cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, thickness)
                 
