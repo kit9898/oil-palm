@@ -59,9 +59,19 @@ export default {
       fontFamily: {
         "headline": ["Inter", "sans-serif"],
         "body": ["Inter", "sans-serif"],
-        "label": ["Inter", "sans-serif"]
+        "label": ["Inter", "sans-serif"],
+        garet: ['Garet', 'sans-serif'],
       },
-      borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+      borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" },
+      keyframes: {
+        'scroll-left': {          // ← must match animation definition below
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        }
+      },
+      animation: {
+        'scroll-infinite': 'scroll-left 30s linear infinite',  // ← uses 'scroll-left'
+      },
     },
   },
   plugins: [],

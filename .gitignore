@@ -37,3 +37,7 @@ data/*.rar
 
 # Log files
 *.log
+
+# Detection Results
+data/*.jpg
+data/*.csv

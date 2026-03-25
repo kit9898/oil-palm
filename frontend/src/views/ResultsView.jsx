@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function ResultsView({ isBlurred, onNewScan, results }) {
   // If isBlurred is true, we render it but heavily blurred and darker, just like processing/code.html
@@ -10,11 +11,11 @@ export default function ResultsView({ isBlurred, onNewScan, results }) {
       {/* Top Navigation Anchor */}
       <header className="w-full top-0 sticky bg-[#f9f9fb] dark:bg-slate-950 flex justify-between items-center px-8 py-4 z-50 flex-shrink-0">
         <div className="flex items-center gap-8">
-          <img src="/src/assets/logo.png" alt="Logo" className="h-16 w-auto object-contain" />
+          <img src="/src/assets/images.png" alt="Logo" className="h-16 w-auto object-contain" />
           <nav className="hidden md:flex gap-6">
-            <a className="text-[#0058bc] font-semibold text-sm transition-colors" href="#">Dashboard</a>
-            <a className="text-[#414755] dark:text-slate-400 text-sm hover:bg-[#e8e8ea] px-3 py-1 rounded-full transition-colors" href="#">Detection</a>
-            <a className="text-[#414755] dark:text-slate-400 text-sm hover:bg-[#e8e8ea] px-3 py-1 rounded-full transition-colors" href="#">Analytics</a>
+            <Link className="text-[#0058bc] font-semibold text-sm transition-colors" to="/dashboard">Dashboard</Link>
+            <Link className="text-[#414755] dark:text-slate-400 text-sm hover:bg-[#e8e8ea] px-3 py-1 rounded-full transition-colors" to="/view">View</Link>
+            <Link className="text-[#414755] dark:text-slate-400 text-sm hover:bg-[#e8e8ea] px-3 py-1 rounded-full transition-colors" to="/result">Result</Link>
           </nav>
         </div>
         <div className="flex items-center gap-4">
@@ -35,18 +36,18 @@ export default function ResultsView({ isBlurred, onNewScan, results }) {
             <p className="text-[10px] uppercase tracking-widest text-on-surface-variant opacity-60">Premium B2B v2.4</p>
           </div>
           <nav className="space-y-1 flex-1">
-            <a className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#0058bc] dark:text-blue-400 font-bold border-r-2 border-[#0058bc] bg-gradient-to-r from-transparent to-[#f3f3f5] transition-all duration-300" href="#">
+            <Link className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#0058bc] dark:text-blue-400 font-bold border-r-2 border-[#0058bc] bg-gradient-to-r from-transparent to-[#f3f3f5] transition-all duration-300" to="/dashboard">
               <span className="material-symbols-outlined">grid_view</span>
               <span className="text-sm">Dashboard</span>
-            </a>
-            <a className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#414755] dark:text-slate-400 hover:text-[#1a1c1d] hover:bg-[#f3f3f5] transition-all" href="#">
+            </Link>
+            <Link className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#414755] dark:text-slate-400 hover:text-[#1a1c1d] hover:bg-[#f3f3f5] transition-all" to="/view">
               <span className="material-symbols-outlined">biotech</span>
-              <span className="text-sm">Detection</span>
-            </a>
-            <a className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#414755] dark:text-slate-400 hover:text-[#1a1c1d] hover:bg-[#f3f3f5] transition-all" href="#">
+              <span className="text-sm">View</span>
+            </Link>
+            <Link className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#414755] dark:text-slate-400 hover:text-[#1a1c1d] hover:bg-[#f3f3f5] transition-all" to="/result">
               <span className="material-symbols-outlined">query_stats</span>
-              <span className="text-sm">Analytics</span>
-            </a>
+              <span className="text-sm">Result</span>
+            </Link>
             <a className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#414755] dark:text-slate-400 hover:text-[#1a1c1d] hover:bg-[#f3f3f5] transition-all" href="#">
               <span className="material-symbols-outlined">potted_plant</span>
               <span className="text-sm">Inventory</span>
