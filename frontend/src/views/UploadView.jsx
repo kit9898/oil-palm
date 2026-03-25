@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import logo from '../assets/logo.png';
 
 export default function UploadView({ onUpload }) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -40,7 +41,7 @@ export default function UploadView({ onUpload }) {
       {/* Top Navigation Bar */}
       <header className="w-full top-0 sticky flex justify-between items-center px-8 py-4 bg-[#f9f9fb] z-50">
         <div className="flex items-center gap-2">
-          <img src="/src/assets/logo.png" alt="Logo" className="h-16 w-auto object-contain" />
+          <img src={logo} alt="Logo" className="h-16 w-auto object-contain" />
         </div>
         <nav className="hidden md:flex items-center gap-8">
           <a className="text-[#414755] hover:bg-[#e8e8ea] transition-colors px-4 py-2 rounded-full text-sm font-medium" href="#">Dashboard</a>
@@ -61,9 +62,11 @@ export default function UploadView({ onUpload }) {
             <span className="inline-block px-4 py-1.5 rounded-full bg-secondary-fixed text-on-secondary-fixed text-xs font-bold tracking-widest uppercase mb-4">
               Precision Agriculture AI
             </span>
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter text-on-surface">
-              Project <span className="text-primary italic">Canopy</span>
-            </h1>
+            <img
+              src={logo}
+              alt="Project Canopy"
+              className="mx-auto w-64 sm:w-80 md:w-[30rem] lg:w-[36rem] h-auto"
+            />
             <p className="text-on-surface-variant text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
               Advanced palm health detection through structural data architecture and computer vision.
             </p>
