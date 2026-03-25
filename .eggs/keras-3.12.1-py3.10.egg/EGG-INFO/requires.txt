@@ -1,0 +1,8 @@
+absl-py
+h5py
+ml-dtypes
+namex
+numpy
+optree
+packaging
+rich

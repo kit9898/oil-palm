@@ -44,8 +44,8 @@ export default function ProcessingOverlay() {
           {/* Textual Identity */}
           <div className="space-y-3 mb-12 relative">
             <p className="text-on-surface-variant text-[0.75rem] font-bold tracking-[0.1em] uppercase">Plantation AI Analysis</p>
-            <h1 className="text-3xl font-headline font-bold text-on-surface tracking-tight">Processing Process...</h1>
-            <p className="text-on-surface-variant text-lg opacity-80">Loading Pages</p>
+            <h1 className="text-3xl font-headline font-bold text-on-surface tracking-tight">Running Detection Engine...</h1>
+            <p className="text-on-surface-variant text-lg opacity-80">Analyzing spatial data...</p>
           </div>
           
           {/* Progress Section */}

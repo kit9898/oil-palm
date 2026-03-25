@@ -1,17 +1,16 @@
 import React from 'react';
 
-export default function ResultsView({ isBlurred, onNewScan }) {
+export default function ResultsView({ isBlurred, onNewScan, results }) {
   // If isBlurred is true, we render it but heavily blurred and darker, just like processing/code.html
-  const containerClasses = `flex flex-col h-screen overflow-hidden ${
-    isBlurred ? 'blur-xl brightness-75 scale-105 pointer-events-none fixed inset-0 z-0' : 'bg-background text-on-surface antialiased'
-  }`;
+  const containerClasses = `flex flex-col h-screen overflow-hidden ${isBlurred ? 'blur-xl brightness-75 scale-105 pointer-events-none fixed inset-0 z-0' : 'bg-background text-on-surface antialiased'
+    }`;
 
   return (
     <div className={containerClasses}>
       {/* Top Navigation Anchor */}
       <header className="w-full top-0 sticky bg-[#f9f9fb] dark:bg-slate-950 flex justify-between items-center px-8 py-4 z-50 flex-shrink-0">
         <div className="flex items-center gap-8">
-          <span className="text-xl font-bold tracking-tighter text-[#1a1c1d] dark:text-slate-100">PalmArchitect</span>
+          <img src="/src/assets/logo.png" alt="Logo" className="h-16 w-auto object-contain" />
           <nav className="hidden md:flex gap-6">
             <a className="text-[#0058bc] font-semibold text-sm transition-colors" href="#">Dashboard</a>
             <a className="text-[#414755] dark:text-slate-400 text-sm hover:bg-[#e8e8ea] px-3 py-1 rounded-full transition-colors" href="#">Detection</a>
@@ -27,7 +26,7 @@ export default function ResultsView({ isBlurred, onNewScan }) {
           </button>
         </div>
       </header>
-      
+
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar Navigation Anchor */}
         <aside className="hidden md:flex flex-col h-full w-64 bg-[#e8e8ea] dark:bg-slate-900 border-none py-6 px-4 shrink-0 overflow-y-auto hide-scrollbar">
@@ -84,15 +83,15 @@ export default function ResultsView({ isBlurred, onNewScan }) {
               {/* Count Indicator */}
               <div className="flex items-center bg-surface-container-low rounded-2xl p-4 gap-6">
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-bold text-on-surface-variant uppercase opacity-60">Previous Count</span>
-                  <span className="text-2xl font-headline font-semibold text-on-surface">Lost: 80</span>
+                  <span className="text-[10px] font-bold text-on-surface-variant uppercase opacity-60">Status</span>
+                  <span className="text-xl font-headline font-semibold text-on-surface">{results ? "Analysis Complete" : "Waiting for scan"}</span>
                 </div>
                 <div className="h-10 w-[1px] bg-outline-variant/30"></div>
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-bold text-tertiary uppercase">New Detection</span>
+                  <span className="text-[10px] font-bold text-tertiary uppercase">Total Detected</span>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-headline font-bold text-primary">+50</span>
-                    <span className="text-sm text-on-surface-variant">= 130 Total</span>
+                    <span className="text-2xl font-headline font-bold text-primary">{results ? results.total : "--"}</span>
+                    <span className="text-sm text-on-surface-variant">Palms</span>
                   </div>
                 </div>
               </div>
@@ -102,8 +101,8 @@ export default function ResultsView({ isBlurred, onNewScan }) {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
               {/* Main Photo View */}
               <div className="lg:col-span-8 group relative rounded-xl overflow-hidden bg-surface-container-lowest shadow-2xl shadow-primary/5 min-h-[400px]">
-                <div className="aspect-[16/10] w-full bg-surface-variant relative overflow-hidden">
-                  <img className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Cinematic wide shot" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjvBmVoU7f7S0UTHwVy6Xbv5ZyWZNVg-uHOsQ5nZGZnyLlaChqCv1lkNqtH5gwxefLwXIn9c6L-qv7SRbKvURzsjUbKMNcz0DYzUi1dkGakceCOpA-ISaDu_nNJN4EG1RMqIqE3ujS-BNhlQWr3ihUAmY_SDDo1OcpOkB18io8HZ3nc3LsD0WT-f2kRxccU1_kZgEyPgaio8Ui_NiHTa0Esc_OuG2yPASTJWZQh4GbAiadsBX-JYP7--X6u4_dhzSvt49dxWO0F_84"/>
+                <div className="aspect-[16/10] w-full bg-surface-variant relative overflow-hidden flex items-center justify-center bg-black/5">
+                  <img className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105" alt="Detection result" src={results ? results.imageUrl : "https://lh3.googleusercontent.com/aida-public/AB6AXuAjvBmVoU7f7S0UTHwVy6Xbv5ZyWZNVg-uHOsQ5nZGZnyLlaChqCv1lkNqtH5gwxefLwXIn9c6L-qv7SRbKvURzsjUbKMNcz0DYzUi1dkGakceCOpA-ISaDu_nNJN4EG1RMqIqE3ujS-BNhlQWr3ihUAmY_SDDo1OcpOkB18io8HZ3nc3LsD0WT-f2kRxccU1_kZgEyPgaio8Ui_NiHTa0Esc_OuG2yPASTJWZQh4GbAiadsBX-JYP7--X6u4_dhzSvt49dxWO0F_84"} />
                   {/* AI Overlay UI Elements */}
                   <div className="absolute inset-0 bg-gradient-to-t from-on-surface/40 to-transparent pointer-events-none"></div>
                   {/* Floating Data Labels */}
@@ -126,10 +125,12 @@ export default function ResultsView({ isBlurred, onNewScan }) {
                         <span className="material-symbols-outlined text-primary">layers</span>
                       </button>
                     </div>
-                    <button className="bg-white text-primary px-6 py-3 rounded-full font-bold text-sm flex items-center gap-2 shadow-xl hover:bg-gray-50 transition-colors">
-                      <span className="material-symbols-outlined">download</span>
-                      Export Detail
-                    </button>
+                    {results && results.csvUrl && (
+                      <a href={results.csvUrl} download="result.csv" className="bg-white text-primary px-6 py-3 rounded-full font-bold text-sm flex items-center gap-2 shadow-xl hover:bg-gray-50 transition-colors">
+                        <span className="material-symbols-outlined">download</span>
+                        Export Detail
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>
@@ -151,9 +152,9 @@ export default function ResultsView({ isBlurred, onNewScan }) {
                       <span className="text-sm text-on-surface-variant">AI Confidence</span>
                       <div className="flex items-center gap-2">
                         <div className="w-24 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
-                          <div className="w-[98%] h-full bg-primary"></div>
+                          <div className="h-full bg-primary transition-all duration-1000" style={{ width: `${results ? results.avgConf * 100 : 0}%` }}></div>
                         </div>
-                        <span className="text-xs font-bold text-primary">98.4%</span>
+                        <span className="text-xs font-bold text-primary">{results ? (results.avgConf * 100).toFixed(1) : "0.0"}%</span>
                       </div>
                     </div>
                   </div>
@@ -190,11 +191,11 @@ export default function ResultsView({ isBlurred, onNewScan }) {
                   </button>
                 </div>
               </div>
-              
+
               <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-4 -mx-2 px-2">
                 <button className="flex-none w-48 group ring-2 ring-primary ring-offset-4 ring-offset-background rounded-lg transition-all text-left">
                   <div className="aspect-video w-full rounded-lg overflow-hidden bg-surface-container-highest mb-2">
-                    <img className="w-full h-full object-cover" alt="Thumbnail 1" src="https://lh3.googleusercontent.com/aida-public/AB6AXuByQvB1h2scHRKHi0V3pRHbvJS7_v2hFSJd19AX2osW0fpqg7OFfdFiFLhFNpuyrodAjgrq0g_3x3Vy4sQV1sHXiwP_qHWsjzSx5VgRwB6dmezd4pHKjG9A0wpkx8zHKKO0oO407FOJRLVHGLylEO6IzFEhLVaTsAQYJmlWMk39T_8jYz3qcan0RdFVkUYiQsXj2jju4oFqF1xzIU2A4zMGQdi3xTmjaKxVTVitO8qm1ylKSdADv0tDWDTPUVLWBPnx_ChnsM_X5v_V"/>
+                    <img className="w-full h-full object-cover" alt="Thumbnail 1" src="https://lh3.googleusercontent.com/aida-public/AB6AXuByQvB1h2scHRKHi0V3pRHbvJS7_v2hFSJd19AX2osW0fpqg7OFfdFiFLhFNpuyrodAjgrq0g_3x3Vy4sQV1sHXiwP_qHWsjzSx5VgRwB6dmezd4pHKjG9A0wpkx8zHKKO0oO407FOJRLVHGLylEO6IzFEhLVaTsAQYJmlWMk39T_8jYz3qcan0RdFVkUYiQsXj2jju4oFqF1xzIU2A4zMGQdi3xTmjaKxVTVitO8qm1ylKSdADv0tDWDTPUVLWBPnx_ChnsM_X5v_V" />
                   </div>
                   <div className="flex justify-between items-center px-1">
                     <span className="text-xs font-bold text-primary">Photo 1</span>
@@ -203,7 +204,7 @@ export default function ResultsView({ isBlurred, onNewScan }) {
                 </button>
                 <button className="flex-none w-48 group hover:translate-y-[-4px] transition-all text-left">
                   <div className="aspect-video w-full rounded-lg overflow-hidden bg-surface-container-highest mb-2">
-                    <img className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Thumbnail 2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZwiOgN8mycf_VYmHu1V41iBS35VDeucfQQfMEAIJY2rJhcEPbgXr1NF79-xt529D9vkSbdDi-nasXITmGc61_5NCCDVE4_LuFRRE5UcRo_N3HoBXiLwC0mu6onHgkj5l6xuiw35YpxEuhhr8mZx0_Dd3c-kakO_ADEmYer4Ze-ditIXnqTZALmons9v3O-Eetj1B3lHY9bd9fjgauiPybdCGGHM8UTcnoD-nMNc0Qqg50d0JSG6C6BiOoSptG10smM_dtrCz2yxIL"/>
+                    <img className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Thumbnail 2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZwiOgN8mycf_VYmHu1V41iBS35VDeucfQQfMEAIJY2rJhcEPbgXr1NF79-xt529D9vkSbdDi-nasXITmGc61_5NCCDVE4_LuFRRE5UcRo_N3HoBXiLwC0mu6onHgkj5l6xuiw35YpxEuhhr8mZx0_Dd3c-kakO_ADEmYer4Ze-ditIXnqTZALmons9v3O-Eetj1B3lHY9bd9fjgauiPybdCGGHM8UTcnoD-nMNc0Qqg50d0JSG6C6BiOoSptG10smM_dtrCz2yxIL" />
                   </div>
                   <div className="flex justify-between items-center px-1">
                     <span className="text-xs font-semibold text-on-surface">Photo 2</span>
@@ -212,7 +213,7 @@ export default function ResultsView({ isBlurred, onNewScan }) {
                 </button>
                 <button className="flex-none w-48 group hover:translate-y-[-4px] transition-all text-left">
                   <div className="aspect-video w-full rounded-lg overflow-hidden bg-surface-container-highest mb-2">
-                    <img className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Thumbnail 3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBs47QwcAAxM51e2K9S3jIHu-b6MQoi6Z3nYqmR9lZ5b8tBwE2mjb_4YSuu8M6D_ZUs6Sdxm1qGmD5g85Y4iGtQyTsRgOw_0OPaXzRi7h14xKb3wtZHHMEBqIkFTBTfKEvU-h3lzgKj8Jy_A-P8lNIE9KLAqAHuMEr6IuXW1rfJ-SGPdS3gUtpCk-wb1WKtvitWYX2mE2PaDOmLlTFLjCMZg4yhl0jO7ynBR8MyGAz0IegbwE6JxHkYcerZokMWGCls-88lCQAfD0Wr"/>
+                    <img className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Thumbnail 3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBs47QwcAAxM51e2K9S3jIHu-b6MQoi6Z3nYqmR9lZ5b8tBwE2mjb_4YSuu8M6D_ZUs6Sdxm1qGmD5g85Y4iGtQyTsRgOw_0OPaXzRi7h14xKb3wtZHHMEBqIkFTBTfKEvU-h3lzgKj8Jy_A-P8lNIE9KLAqAHuMEr6IuXW1rfJ-SGPdS3gUtpCk-wb1WKtvitWYX2mE2PaDOmLlTFLjCMZg4yhl0jO7ynBR8MyGAz0IegbwE6JxHkYcerZokMWGCls-88lCQAfD0Wr" />
                   </div>
                   <div className="flex justify-between items-center px-1">
                     <span className="text-xs font-semibold text-on-surface">Photo 3</span>
@@ -221,7 +222,7 @@ export default function ResultsView({ isBlurred, onNewScan }) {
                 </button>
                 <button className="flex-none w-48 group hover:translate-y-[-4px] transition-all text-left">
                   <div className="aspect-video w-full rounded-lg overflow-hidden bg-surface-container-highest mb-2">
-                    <img className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Thumbnail 4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARHyAi7CfPJP5huct2AMfhNdp_joARVB8b5ikVQ2uZUOLWw0JD15qRj3cotYnz-cJFSmIO-mrNsB-H7abDgMeD0ND4-IC32RKSkPluYza7SC6d4FR0bf-5-NEuQt5buXcy_ijmmlbVYZzE65PhhxmC_YjIvyCrtaT0S4tc4UX_hxOyO2cQYYMgYHLC4Z67X2ytWb1i7S7WiaOlrFk87B2Oq7StLSsn6PzMdZLuiHXJp3XxFQWPCmgQOnOXmmLNykVVlsquvNh__hhD"/>
+                    <img className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Thumbnail 4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARHyAi7CfPJP5huct2AMfhNdp_joARVB8b5ikVQ2uZUOLWw0JD15qRj3cotYnz-cJFSmIO-mrNsB-H7abDgMeD0ND4-IC32RKSkPluYza7SC6d4FR0bf-5-NEuQt5buXcy_ijmmlbVYZzE65PhhxmC_YjIvyCrtaT0S4tc4UX_hxOyO2cQYYMgYHLC4Z67X2ytWb1i7S7WiaOlrFk87B2Oq7StLSsn6PzMdZLuiHXJp3XxFQWPCmgQOnOXmmLNykVVlsquvNh__hhD" />
                   </div>
                   <div className="flex justify-between items-center px-1">
                     <span className="text-xs font-semibold text-on-surface">Photo 4</span>
@@ -242,7 +243,7 @@ export default function ResultsView({ isBlurred, onNewScan }) {
 
       {/* Floating Action Button */}
       {!isBlurred && (
-        <button 
+        <button
           onClick={onNewScan}
           className="fixed bottom-8 right-8 bg-primary text-white p-5 rounded-full shadow-2xl shadow-primary/40 hover:scale-110 active:scale-95 transition-all duration-300 z-50 group flex items-center justify-center"
         >

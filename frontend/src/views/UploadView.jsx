@@ -1,6 +1,32 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 
 export default function UploadView({ onUpload }) {
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [confidence, setConfidence] = useState(0.5);
+  const fileInputRef = useRef(null);
+
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      setSelectedFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleSubmit = () => {
+    if (selectedFile) {
+      onUpload(selectedFile, confidence);
+    }
+  };
   return (
     <div className="bg-surface font-body text-on-surface antialiased overflow-hidden min-h-screen relative">
       {/* Background Pattern Overlay */}
@@ -10,11 +36,11 @@ export default function UploadView({ onUpload }) {
         backgroundSize: '40px 40px',
         backgroundPosition: '0 0, 20px 20px'
       }}></div>
-      
+
       {/* Top Navigation Bar */}
       <header className="w-full top-0 sticky flex justify-between items-center px-8 py-4 bg-[#f9f9fb] z-50">
         <div className="flex items-center gap-2">
-          <span className="text-xl font-bold tracking-tighter text-[#1a1c1d] font-['Inter'] antialiased tracking-tight">PalmArchitect</span>
+          <img src="/src/assets/logo.png" alt="Logo" className="h-16 w-auto object-contain" />
         </div>
         <nav className="hidden md:flex items-center gap-8">
           <a className="text-[#414755] hover:bg-[#e8e8ea] transition-colors px-4 py-2 rounded-full text-sm font-medium" href="#">Dashboard</a>
@@ -36,7 +62,7 @@ export default function UploadView({ onUpload }) {
               Precision Agriculture AI
             </span>
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter text-on-surface">
-              Project <span className="text-primary italic">Oil-Palm</span>
+              Project <span className="text-primary italic">Canopy</span>
             </h1>
             <p className="text-on-surface-variant text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
               Advanced palm health detection through structural data architecture and computer vision.
@@ -46,21 +72,60 @@ export default function UploadView({ onUpload }) {
           {/* Upload Bento Container */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
             {/* Primary Action Card */}
-            <div className="md:col-span-8 bg-surface-container-lowest rounded-lg p-12 border border-outline-variant/15 flex flex-col items-center justify-center space-y-8 relative group overflow-hidden">
+            <div
+              className="md:col-span-8 bg-surface-container-lowest rounded-lg p-12 border border-outline-variant/15 flex flex-col items-center justify-center space-y-6 relative group overflow-hidden"
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+            >
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               <div className="relative z-10 w-24 h-24 bg-surface-container-low rounded-full flex items-center justify-center">
                 <span className="material-symbols-outlined text-primary text-5xl flex">cloud_upload</span>
               </div>
-              <div className="relative z-10 space-y-3">
+              <div className="relative z-10 space-y-3 text-center">
                 <h2 className="text-2xl font-bold tracking-tight">Ready for Detection?</h2>
                 <p className="text-on-surface-variant text-sm">Drag and drop high-resolution imagery here or browse your local directory.</p>
+                {selectedFile && <p className="text-primary font-semibold mt-2">Selected: {selectedFile.name}</p>}
               </div>
-              <button 
-                onClick={onUpload}
-                className="relative z-10 px-10 py-5 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-full font-bold text-lg hover:shadow-[0_20px_40px_rgba(0,88,188,0.15)] active:scale-95 transition-all duration-300"
-              >
-                Upload Photo
-              </button>
+
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleFileChange}
+              />
+
+              <div className="relative z-10 flex flex-col items-center gap-6 w-full max-w-sm mt-4">
+                <div className="w-full">
+                  <div className="flex justify-between text-xs font-bold text-on-surface-variant mb-2">
+                    <span>AI Confidence Threshold</span>
+                    <span className="text-primary">{Math.round(confidence * 100)}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0.1" max="1.0" step="0.05"
+                    value={confidence}
+                    onChange={(e) => setConfidence(parseFloat(e.target.value))}
+                    className="w-full accent-primary h-2 bg-surface-container-high rounded-lg appearance-none cursor-pointer"
+                  />
+                </div>
+
+                <div className="flex gap-4 w-full">
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex-1 py-4 bg-surface-container-high text-on-surface rounded-full font-bold text-sm hover:bg-surface-container-highest transition-colors shadow-sm"
+                  >
+                    Select File
+                  </button>
+                  <button
+                    onClick={handleSubmit}
+                    disabled={!selectedFile}
+                    className={`flex-1 py-4 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-full font-bold text-sm transition-all duration-300 ${!selectedFile ? 'opacity-50 cursor-not-allowed grayscale' : 'hover:shadow-[0_15px_30px_rgba(0,88,188,0.2)] active:scale-95'}`}
+                  >
+                    Run Detection
+                  </button>
+                </div>
+              </div>
               <div className="relative z-10 flex gap-4 text-xs font-semibold text-on-surface-variant/60 uppercase tracking-widest pt-4">
                 <span>JPG</span>
                 <span>PNG</span>
@@ -91,7 +156,7 @@ export default function UploadView({ onUpload }) {
 
         {/* Featured Plant Section */}
         <div className="absolute -bottom-24 -right-12 md:bottom-12 md:right-12 w-64 md:w-96 opacity-20 md:opacity-40 select-none pointer-events-none transform rotate-12">
-          <img alt="Plantation abstract view" className="w-full h-auto grayscale brightness-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5MyenuMqVCeO3O-6GZjp2mFF0tRKIZH7OmcOUAzZ-oV9TETyQVtlmHErYJMWmDrEgbKZTcirI5Hrd43JqCmQ1zoVCPeHgFEkeSedk9LqOCeOHK0nzCSzkemzVOpWgUMcj6OYc2tdha3blJjASVWpsCNv6rfyxuot7eHCVMTEZ87f_XYkel83UQfdPpbueHIXhm3R1aBaOPve4dt4i-6uBbwKOXnKJjYImHrK2UleI_sdUG82NxweBLi0cYbI6lAR5BOBhHzdXZ-O2"/>
+          <img alt="Plantation abstract view" className="w-full h-auto grayscale brightness-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5MyenuMqVCeO3O-6GZjp2mFF0tRKIZH7OmcOUAzZ-oV9TETyQVtlmHErYJMWmDrEgbKZTcirI5Hrd43JqCmQ1zoVCPeHgFEkeSedk9LqOCeOHK0nzCSzkemzVOpWgUMcj6OYc2tdha3blJjASVWpsCNv6rfyxuot7eHCVMTEZ87f_XYkel83UQfdPpbueHIXhm3R1aBaOPve4dt4i-6uBbwKOXnKJjYImHrK2UleI_sdUG82NxweBLi0cYbI6lAR5BOBhHzdXZ-O2" />
         </div>
       </main>
 

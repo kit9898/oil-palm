@@ -1,0 +1,39 @@
+# General
+.DS_Store
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv
+env/
+venv/
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Node/Frontend
+node_modules/
+frontend/node_modules/
+.npm
+frontend/dist/
+
+# Data and Models (Large Files)
+data/*.h5
+data/*.pth
+data/*.weights
+models/*.h5
+models/*.pth
+*.h5
+*.model
+*.weights
+data/*.zip
+data/*.tar.gz
+data/*.rar
+
+# Log files
+*.log

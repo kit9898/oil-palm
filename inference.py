@@ -46,15 +46,19 @@ def main():
             print(f"Fatal error loading model: {e2}")
             sys.exit(1)
 
-    # 2. Assert Inference Model
+    # 2. Assert Inference Model 
     # A RetinaNet training model outputs raw regressor/classifier tensors. 
     # An inference model runs Non-Maximum Suppression (NMS) and outputs bounding boxes.
+    # We force a conversion here to ensure the max_detections limit of 10000 is applied,
+    # even if the model was already saved as an inference model with a lower limit.
     try:
-        if not any([layer.name.startswith('filter_detections') for layer in model.layers]):
-            print("Detected raw training model. Adding NMS layers to convert to inference model...")
-            model = models.convert_model(model)
+        print("Ensuring model is configured for high-capacity detection (max_detections=10000)...")
+        # Attempt to convert to ensure the limit is set. 
+        # If it's already an inference model, we try to rebuild it from the base layers.
+        model = models.convert_model(model, max_detections=10000)
     except Exception as e:
-        print(f"Warning during model conversion check: {e}")
+        print(f"Warning during model conversion: {e}")
+        print("Proceeding with existing model configuration...")
         
     print("Model initialized and ready.")
 
@@ -77,6 +81,7 @@ def main():
     
     # Keras-retinanet typically returns: (boxes, scores, labels)
     boxes, scores, labels = preds[:3]
+    print(f"DEBUG: Raw model output contain {boxes.shape[1]} detections.")
 
     # Rescale bounding boxes back to the original image dimensions
     boxes /= scale

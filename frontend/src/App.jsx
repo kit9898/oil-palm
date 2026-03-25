@@ -5,20 +5,41 @@ import ProcessingOverlay from './views/ProcessingOverlay';
 
 function App() {
   const [appState, setAppState] = useState('upload'); // 'upload' | 'processing' | 'results'
+  const [results, setResults] = useState(null);
 
-  const handleUpload = () => {
+  const handleUpload = async (file, confidence) => {
     setAppState('processing');
-  };
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('confidence', confidence);
 
-  useEffect(() => {
-    if (appState === 'processing') {
-      // Simulate a processing delay of 4 seconds
-      const timer = setTimeout(() => {
-        setAppState('results');
-      }, 4000);
-      return () => clearTimeout(timer);
+    try {
+      const apiHost = window.location.hostname;
+      const response = await fetch(`http://${apiHost}:8000/api/v1/detect`, {
+          method: 'POST',
+          body: formData,
+      });
+
+      if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      setResults({
+          total: data.total_palms,
+          avgConf: data.avg_confidence,
+          imageUrl: data.annotated_image_url + "?t=" + new Date().getTime(),
+          csvUrl: data.csv_download_url
+      });
+      setAppState('results');
+    } catch (error) {
+      console.error("Detection failed:", error);
+      alert("Inference failed, check console for details.");
+      setAppState('upload');
     }
-  }, [appState]);
+  };
 
   return (
     <div className="w-full min-h-screen bg-background text-on-surface font-body antialiased relative">
@@ -26,7 +47,11 @@ function App() {
       
       {/* Both Processing and Results share the ResultsView as a background, but in Processing it's blurred behind an overlay */}
       {(appState === 'processing' || appState === 'results') && (
-        <ResultsView isBlurred={appState === 'processing'} onNewScan={() => setAppState('upload')} />
+        <ResultsView 
+          isBlurred={appState === 'processing'} 
+          onNewScan={() => { setAppState('upload'); setResults(null); }}
+          results={results}
+        />
       )}
 
       {appState === 'processing' && <ProcessingOverlay />}

@@ -1,16 +1,34 @@
-# React + Vite
+# PalmArchitect React Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the high-fidelity React dashboard for the Oil Palm Detection project. It is built using **Vite** and **Tailwind CSS**.
 
-Currently, two official plugins are available:
+## 📦 Installation
+1. Install the required Node.js packages:
+   ```bash
+   npm install
+   ```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Running the App
+Start the development server:
+```bash
+npm run dev
+```
 
-## React Compiler
+## 📂 Folder Structure
+- `/src/views/`: 
+  - `UploadView.jsx`: Initial landing page for image selection and confidence setting.
+  - `ProcessingOverlay.jsx`: Sophisticated glassmorphism loader shown during AI inference.
+  - `ResultsView.jsx`: Interactive dashboard showing the detection count, confidence, and annotated image.
+- `/src/App.jsx`: Main entry point and state coordinator (manages API calls).
+- `/src/index.css`: Global styles including custom Google Font (Inter) and Tailwind primitives.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛰️ API Configuration
+The frontend communicates with the backend at `http://localhost:8000`. 
+If your backend is running on a different IP (e.g., a standalone Jetson), you must update the `fetch()` URL in `src/App.jsx`.
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🛠️ Tech Stack
+- **React 19**
+- **Vite 8** (Lightning-fast builds)
+- **Tailwind CSS 3** (Styling)
+- **Material Symbols** (Iconology)
+- **Google Fonts** (Typography)
