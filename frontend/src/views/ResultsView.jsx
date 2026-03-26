@@ -36,6 +36,10 @@ export default function ResultsView({
   const [selectedScanKey, setSelectedScanKey] = useState(null);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [viewerZoom, setViewerZoom] = useState(1);
+  const [isAddImageConfigOpen, setIsAddImageConfigOpen] = useState(false);
+  const [addImageConfidence, setAddImageConfidence] = useState(
+    Number.isFinite(defaultConfidence) ? defaultConfidence : 0.5
+  );
 
   const reelItems = useMemo(() => {
     if (Array.isArray(scanHistory) && scanHistory.length > 0) {
@@ -77,6 +81,16 @@ export default function ResultsView({
   };
 
   const triggerAddImage = () => {
+    setAddImageConfidence(Number.isFinite(defaultConfidence) ? defaultConfidence : 0.5);
+    setIsAddImageConfigOpen(true);
+  };
+
+  const closeAddImageConfig = () => {
+    setIsAddImageConfigOpen(false);
+  };
+
+  const openPickerWithConfiguredConfidence = () => {
+    setIsAddImageConfigOpen(false);
     uploadInputRef.current?.click();
   };
 
@@ -86,7 +100,7 @@ export default function ResultsView({
 
     if (!file || !onUpload) return;
 
-    const confidence = Number.isFinite(defaultConfidence) ? defaultConfidence : 0.5;
+    const confidence = Math.max(0.1, Math.min(1, Number(addImageConfidence) || 0.5));
     onUpload(file, confidence);
   };
 
@@ -116,7 +130,6 @@ export default function ResultsView({
 
   return (
     <div className={containerClasses}>
-      {/* Top Navigation Anchor */}
       <header className="w-full top-0 sticky bg-[#f9f9fb] dark:bg-slate-950 flex justify-between items-center px-8 py-4 z-50 flex-shrink-0">
         <div className="flex items-center gap-8">
           <img src="/src/assets/images.png" alt="Logo" className="h-16 w-auto object-contain" />
@@ -149,7 +162,6 @@ export default function ResultsView({
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar Navigation Anchor */}
         <aside className="hidden md:flex flex-col h-full w-64 bg-[#e8e8ea] dark:bg-slate-900 border-none py-6 px-4 shrink-0 overflow-y-auto hide-scrollbar">
           <div className="mb-8 px-2">
             <h2 className="text-lg font-black text-[#1a1c1d] dark:text-slate-100">Plantation AI</h2>
@@ -218,10 +230,8 @@ export default function ResultsView({
           </div>
         </aside>
 
-        {/* Main Content Canvas */}
         <main className="flex-1 px-8 py-8 w-full mx-auto overflow-y-auto">
           <div className="max-w-7xl mx-auto">
-            {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
               <div className="space-y-2">
                 <span className="text-[10px] font-bold tracking-[0.2em] text-on-surface-variant uppercase">
@@ -231,7 +241,6 @@ export default function ResultsView({
                   Interactive Detection Gallery
                 </h1>
               </div>
-              {/* Count Indicator */}
               <div className="flex items-center bg-surface-container-low rounded-2xl p-4 gap-6">
                 <div className="flex flex-col">
                   <span className="text-[10px] font-bold text-on-surface-variant uppercase opacity-60">
@@ -252,9 +261,7 @@ export default function ResultsView({
               </div>
             </div>
 
-            {/* Bento Grid - Main Focus Area */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-              {/* Main Photo View */}
               <div className="lg:col-span-8 group relative rounded-xl overflow-hidden bg-surface-container-lowest shadow-2xl shadow-primary/5 min-h-[400px]">
                 <div className="aspect-[16/10] w-full bg-surface-variant relative overflow-hidden flex items-center justify-center bg-black/5">
                   <img
@@ -263,9 +270,7 @@ export default function ResultsView({
                     alt="Detection result"
                     src={activeImageUrl}
                   />
-                  {/* AI Overlay UI Elements */}
                   <div className="absolute inset-0 bg-gradient-to-t from-on-surface/40 to-transparent pointer-events-none"></div>
-                  {/* Floating Data Labels */}
                   <div className="absolute top-6 left-6 flex flex-col gap-3">
                     <div className="bg-surface-container-lowest/80 backdrop-blur-md px-4 py-2 rounded-full flex items-center gap-2 border border-white/20">
                       <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
@@ -275,7 +280,6 @@ export default function ResultsView({
                       Photo {photoCountLabel}
                     </div>
                   </div>
-                  {/* Action Controls Overlay */}
                   <div className="absolute bottom-6 left-6 right-6 flex justify-between items-center">
                     <div className="flex gap-2">
                       <button
@@ -305,7 +309,6 @@ export default function ResultsView({
                 </div>
               </div>
 
-              {/* Analysis Sidebar */}
               <div className="lg:col-span-4 flex flex-col gap-6">
                 <div className="bg-surface-container-lowest rounded-xl p-6 border-none shadow-sm">
                   <h3 className="text-lg font-bold mb-4">Metadata Analysis</h3>
@@ -353,7 +356,6 @@ export default function ResultsView({
               </div>
             </div>
 
-            {/* Horizontal Thumbnail Gallery */}
             <div className="mt-12">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold">Inspection Reel</h2>
@@ -424,6 +426,61 @@ export default function ResultsView({
         </main>
       </div>
 
+      {!isBlurred && isAddImageConfigOpen && (
+        <div className="fixed inset-0 z-[1100] bg-black/60 flex items-center justify-center p-4" onClick={closeAddImageConfig}>
+          <div
+            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-on-surface">Set Confidence Before Scan</h3>
+              <button onClick={closeAddImageConfig} className="text-on-surface-variant hover:text-on-surface">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <p className="text-sm text-on-surface-variant mb-4">
+              Lower confidence finds more boxes. Higher confidence is stricter.
+            </p>
+
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Confidence</span>
+                <span className="text-sm font-semibold text-primary">{Math.round(addImageConfidence * 100)}%</span>
+              </div>
+              <input
+                type="range"
+                min="0.1"
+                max="1"
+                step="0.05"
+                value={addImageConfidence}
+                onChange={(event) => setAddImageConfidence(parseFloat(event.target.value))}
+                className="w-full accent-blue-600"
+              />
+              <div className="flex justify-between text-[11px] text-on-surface-variant">
+                <span>More detections</span>
+                <span>Higher precision</span>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={closeAddImageConfig}
+                className="px-4 py-2 rounded-lg border border-outline-variant/40 text-on-surface-variant hover:bg-surface-container-low"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={openPickerWithConfiguredConfidence}
+                className="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90"
+              >
+                Choose Image
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {!isBlurred && isViewerOpen && (
         <div className="fixed inset-0 z-[1200] bg-black/85 flex items-center justify-center p-6" onClick={closeViewer}>
           <div
@@ -467,7 +524,6 @@ export default function ResultsView({
         </div>
       )}
 
-      {/* Floating Action Button */}
       {!isBlurred && (
         <button
           onClick={onNewScan}
