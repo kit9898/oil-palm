@@ -16,7 +16,13 @@ const DEFAULT_TO = '';
 const LEGACY_FROM = 'Klang, Selangor, Malaysia';
 const LEGACY_TO = 'Ipoh, Perak, Malaysia';
 const SEARCH_DEBOUNCE_MS = 300;
-const sponsors = [nvidiaLogo, djiLogo, vantatechLogo, seeedLogo, unitreeLogo];
+const sponsors = [
+    { name: 'NVIDIA', src: nvidiaLogo, sizeClass: 'h-[6.3rem] md:h-[7.35rem]' },
+    { name: 'DJI', src: djiLogo, sizeClass: 'h-[4.5rem] md:h-[5.25rem]' },
+    { name: 'VANTATECH', src: vantatechLogo, sizeClass: 'h-[8.6rem] md:h-[10.2rem]' },
+    { name: 'Seeed Studio', src: seeedLogo, sizeClass: 'h-[2.75rem] md:h-[3.2rem]' },
+    { name: 'UNITREE', src: unitreeLogo, sizeClass: 'h-[6.3rem] md:h-[7.35rem]' },
+];
 
 function ViewportController({ routeCoords, fromLocation, toLocation }) {
     const map = useMap();
@@ -378,7 +384,7 @@ export default function DashboardView({ onUpload }) {
                 <div className="absolute inset-0 bg-black/40 z-10"></div>
 
                 <div className="relative z-20 flex h-full w-full flex-col justify-between pt-24">
-                    <div className="flex-1 flex flex-col items-center justify-start px-6 md:px-12 text-center pt-8 md:pt-12">
+                    <div className="flex-1 flex flex-col items-center justify-center px-6 md:px-12 text-center">
                         <img
                             src={logo}
                             alt="Project Canopy powered by Vanta Vision"
@@ -387,7 +393,7 @@ export default function DashboardView({ onUpload }) {
                         <h1 className="text-5xl md:text-6xl lg:text-2xl font-bold text-white mb-3">
                             Precision counting. Maximum yield.
                         </h1>
-                        <p className="text-lg md:text-xl text-gray-200 max-w-4xl mx-auto leading-relaxed">
+                        <p className="text-base md:text-lg text-gray-200 max-w-3xl mx-auto leading-normal">
                             Empowering modern agriculture with next-generation computer vision. We provide seamless, automated tree counting to streamline your operations and maximize your plantation's potential.
                         </p>
                     </div>
@@ -399,13 +405,12 @@ export default function DashboardView({ onUpload }) {
                         >
                             {[0, 1].map((copyIndex) => (
                                 <div key={`copy-${copyIndex}`} className="flex items-center">
-                                    {sponsors.map((sponsorLogo, sponsorIndex) => (
+                                    {sponsors.map((sponsor, sponsorIndex) => (
                                         <img
                                             key={`sponsor-${copyIndex}-${sponsorIndex}`}
-                                            src={sponsorLogo}
-                                            alt="Sponsor"
-                                            className="h-16 md:h-20
-                                             w-auto object-contain opacity-60 hover:opacity-100 transition-all duration-300 mx-16"
+                                            src={sponsor.src}
+                                            alt={sponsor.name}
+                                            className={`${sponsor.sizeClass} w-auto object-contain opacity-60 hover:opacity-100 transition-all duration-300 mx-12 md:mx-14`}
                                         />
                                     ))}
                                 </div>
@@ -431,16 +436,16 @@ export default function DashboardView({ onUpload }) {
             >
                 <div className="w-full md:w-3/5 h-full rounded-2xl overflow-hidden shadow-lg border border-gray-200 relative bg-gray-100">
                     <div ref={mapRef} className="absolute inset-0">
-                        <MapContainer center={[3.2379, 101.6268]} zoom={12} maxZoom={19} className="w-full h-full" zoomControl={false}>
+                        <MapContainer center={[3.2379, 101.6268]} zoom={12} maxZoom={12} className="w-full h-full" zoomControl={false}>
                             <TileLayer
                                 url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                                 crossOrigin="anonymous"
-                                maxZoom={19}
+                                maxZoom={12}
                             />
                             <TileLayer
                                 url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
                                 crossOrigin="anonymous"
-                                maxZoom={19}
+                                maxZoom={12}
                             />
 
                             <ZoomController onReady={handleMapReady} />
