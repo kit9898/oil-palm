@@ -8,6 +8,7 @@ function App() {
   const navigate = useNavigate();
   const [appState, setAppState] = useState('upload'); // 'upload' | 'processing' | 'results'
   const [results, setResults] = useState(null);
+  const [processingContext, setProcessingContext] = useState({ confidence: null, source: 'Unknown Input' });
   const detectInFlightRef = useRef(false);
 
   const toProxyPath = (value) => {
@@ -53,6 +54,11 @@ function App() {
     }
 
     detectInFlightRef.current = true;
+    const sourceLabel =
+      file && file.name && file.name.toLowerCase().includes('map')
+        ? 'Live Map Capture'
+        : 'Uploaded Image';
+    setProcessingContext({ confidence, source: sourceLabel });
     setAppState('processing');
     navigate('/view');
 
@@ -110,6 +116,7 @@ function App() {
   const handleNewScan = () => {
     setAppState('upload');
     setResults(null);
+    setProcessingContext({ confidence: null, source: 'Unknown Input' });
     navigate('/dashboard');
   };
 
@@ -117,7 +124,10 @@ function App() {
     appState === 'processing' ? (
       <>
         <ResultsView isBlurred onNewScan={handleNewScan} results={results} />
-        <ProcessingOverlay />
+        <ProcessingOverlay
+          confidence={processingContext.confidence}
+          source={processingContext.source}
+        />
       </>
     ) : appState === 'results' ? (
       <Navigate to="/result" replace />

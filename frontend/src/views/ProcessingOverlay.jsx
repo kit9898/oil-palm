@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-export default function ProcessingOverlay() {
+export default function ProcessingOverlay({ confidence, source = 'Unknown Input' }) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -17,6 +17,21 @@ export default function ProcessingOverlay() {
     return () => clearInterval(interval);
   }, []);
 
+  const confidencePercent = Number.isFinite(confidence)
+    ? `${Math.round(confidence * 100)}%`
+    : 'Auto';
+
+  const stageLabel =
+    progress < 20
+      ? 'Initializing model...'
+      : progress < 45
+      ? 'Tiling image sectors...'
+      : progress < 70
+      ? 'Running palm detection...'
+      : progress < 90
+      ? 'Applying confidence filtering...'
+      : 'Finalizing report artifacts...';
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-surface/40 backdrop-blur-3xl">
       <div className="max-w-2xl w-full flex flex-col items-center">
@@ -25,64 +40,66 @@ export default function ProcessingOverlay() {
           {/* Atmospheric Background Accent */}
           <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
           <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-secondary-container/10 rounded-full blur-3xl"></div>
-          
+
           {/* Sophisticated Circular Loader Cluster */}
           <div className="relative w-32 h-32 mb-10">
             {/* Outer Spinner */}
             <div className="absolute inset-0 border-4 border-surface-container-high rounded-full"></div>
-            <div className="absolute inset-0 loader-ring border-[4px]" style={{ borderTopColor: '#0058bc' }}></div>
-            
+            <div className="absolute inset-0 rounded-full border-[4px] border-transparent animate-spin" style={{ borderTopColor: '#0058bc', animationDuration: '1s' }}></div>
+
             {/* Inner Static Icon */}
             <div className="absolute inset-0 flex items-center justify-center">
               <span className="material-symbols-outlined text-primary text-4xl flex" style={{ fontVariationSettings: "'FILL' 1" }}>biotech</span>
             </div>
-            
+
             {/* Pulsing Glow */}
             <div className="absolute inset-0 bg-primary/10 rounded-full animate-subtle-pulse"></div>
           </div>
-          
+
           {/* Textual Identity */}
           <div className="space-y-3 mb-12 relative">
             <p className="text-on-surface-variant text-[0.75rem] font-bold tracking-[0.1em] uppercase">Plantation AI Analysis</p>
             <h1 className="text-3xl font-headline font-bold text-on-surface tracking-tight">Running Detection Engine...</h1>
-            <p className="text-on-surface-variant text-lg opacity-80">Analyzing spatial data...</p>
+            <p className="text-on-surface-variant text-lg opacity-80">{stageLabel}</p>
           </div>
-          
+
           {/* Progress Section */}
           <div className="w-full max-w-md space-y-6 relative">
             {/* Premium Progress Bar */}
             <div className="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-gradient-to-r from-primary to-primary-container transition-all duration-200 ease-out" 
+              <div
+                className="h-full bg-gradient-to-r from-primary to-primary-container transition-all duration-200 ease-out"
                 style={{ width: `${progress}%` }}
               ></div>
             </div>
-            
+
             {/* Metadata Grid */}
             <div className="grid grid-cols-3 gap-4 pt-4">
               <div className="flex flex-col gap-1 items-center">
                 <span className="text-[0.65rem] font-bold text-on-surface-variant/60 uppercase tracking-widest">Confidence</span>
-                <span className="text-sm font-semibold text-primary">94.2%</span>
+                <span className="text-sm font-semibold text-primary">{confidencePercent}</span>
               </div>
               <div className="flex flex-col gap-1 items-center border-x border-outline-variant/20">
-                <span className="text-[0.65rem] font-bold text-on-surface-variant/60 uppercase tracking-widest">Resolution</span>
-                <span className="text-sm font-semibold text-primary">4K NADIR</span>
+                <span className="text-[0.65rem] font-bold text-on-surface-variant/60 uppercase tracking-widest">Source</span>
+                <span className="text-sm font-semibold text-primary">{source}</span>
               </div>
               <div className="flex flex-col gap-1 items-center">
-                <span className="text-[0.65rem] font-bold text-on-surface-variant/60 uppercase tracking-widest">Telemetry</span>
-                <span className="text-sm font-semibold text-primary">ACTIVE</span>
+                <span className="text-[0.65rem] font-bold text-on-surface-variant/60 uppercase tracking-widest">Progress</span>
+                <span className="text-sm font-semibold text-primary">{progress}%</span>
               </div>
             </div>
           </div>
         </div>
-        
+
         {/* Contextual Footer Info */}
         <div className="mt-8 flex items-center gap-3 px-6 py-3 bg-surface-container-high/50 backdrop-blur-sm rounded-full border border-outline-variant/10">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
           </span>
-          <span className="text-xs font-medium text-on-surface-variant">System encrypting architectural data layer 2...</span>
+          <span className="text-xs font-medium text-on-surface-variant">
+            {`Processing ${source.toLowerCase()} with confidence target ${confidencePercent}...`}
+          </span>
         </div>
       </div>
     </div>
