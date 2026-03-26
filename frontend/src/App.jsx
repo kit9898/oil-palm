@@ -8,6 +8,7 @@ function App() {
   const navigate = useNavigate();
   const [appState, setAppState] = useState('upload'); // 'upload' | 'processing' | 'results'
   const [results, setResults] = useState(null);
+  const [scanHistory, setScanHistory] = useState([]);
   const [processingContext, setProcessingContext] = useState({ confidence: null, source: 'Unknown Input' });
   const detectInFlightRef = useRef(false);
 
@@ -53,12 +54,15 @@ function App() {
       return;
     }
 
+    const normalizedConfidence = Number.isFinite(confidence) ? confidence : 0.5;
     detectInFlightRef.current = true;
+
     const sourceLabel =
       file && file.name && file.name.toLowerCase().includes('map')
         ? 'Live Map Capture'
         : 'Uploaded Image';
-    setProcessingContext({ confidence, source: sourceLabel });
+
+    setProcessingContext({ confidence: normalizedConfidence, source: sourceLabel });
     setAppState('processing');
     navigate('/view');
 
@@ -71,7 +75,7 @@ function App() {
         try {
           const formData = new FormData();
           formData.append('file', file);
-          formData.append('confidence', String(confidence));
+          formData.append('confidence', String(normalizedConfidence));
 
           const response = await fetch(endpoint, {
             method: 'POST',
@@ -94,12 +98,19 @@ function App() {
         throw lastError || new Error('All detect endpoints failed.');
       }
 
-      setResults({
+      const nextResult = {
+        id: `scan-${Date.now()}`,
         total: data.total_palms,
         avgConf: data.avg_confidence,
         imageUrl: withCacheBuster(data.annotated_image_url),
         csvUrl: toProxyPath(data.csv_download_url),
-      });
+        source: sourceLabel,
+        threshold: normalizedConfidence,
+        analyzedAt: new Date().toISOString(),
+      };
+
+      setResults(nextResult);
+      setScanHistory((prev) => [...prev, nextResult].slice(-30));
       setAppState('results');
       navigate('/result');
     } catch (error) {
@@ -120,10 +131,20 @@ function App() {
     navigate('/dashboard');
   };
 
+  const sharedResultsProps = {
+    onNewScan: handleNewScan,
+    results,
+    scanHistory,
+    onUpload: handleQuickScan,
+    defaultConfidence: Number.isFinite(processingContext.confidence)
+      ? processingContext.confidence
+      : 0.5,
+  };
+
   const viewElement =
     appState === 'processing' ? (
       <>
-        <ResultsView isBlurred onNewScan={handleNewScan} results={results} />
+        <ResultsView isBlurred {...sharedResultsProps} />
         <ProcessingOverlay
           confidence={processingContext.confidence}
           source={processingContext.source}
@@ -137,7 +158,7 @@ function App() {
 
   const resultElement =
     appState === 'results' ? (
-      <ResultsView isBlurred={false} onNewScan={handleNewScan} results={results} />
+      <ResultsView isBlurred={false} {...sharedResultsProps} />
     ) : appState === 'processing' ? (
       <Navigate to="/view" replace />
     ) : (
