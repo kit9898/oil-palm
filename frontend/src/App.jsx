@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import DashboardView from './views/DashboardView';
 import ResultsView from './views/ResultsView';
@@ -8,6 +8,7 @@ function App() {
   const navigate = useNavigate();
   const [appState, setAppState] = useState('upload'); // 'upload' | 'processing' | 'results'
   const [results, setResults] = useState(null);
+  const detectInFlightRef = useRef(false);
 
   const toProxyPath = (value) => {
     if (!value) return '';
@@ -45,7 +46,13 @@ function App() {
     return endpoints;
   };
 
-  const handleUpload = async (file, confidence) => {
+  const handleQuickScan = async (file, confidence) => {
+    if (detectInFlightRef.current) {
+      console.warn('Detect request skipped: another detection task is already running.');
+      return;
+    }
+
+    detectInFlightRef.current = true;
     setAppState('processing');
     navigate('/view');
 
@@ -95,6 +102,8 @@ function App() {
       setAppState('upload');
       setResults(null);
       navigate('/dashboard');
+    } finally {
+      detectInFlightRef.current = false;
     }
   };
 
@@ -129,7 +138,7 @@ function App() {
     <div className="w-full min-h-screen bg-background text-on-surface font-body antialiased relative">
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="/dashboard" element={<DashboardView onUpload={handleUpload} />} />
+        <Route path="/dashboard" element={<DashboardView onUpload={handleQuickScan} />} />
         <Route path="/view" element={viewElement} />
         <Route path="/result" element={resultElement} />
         <Route

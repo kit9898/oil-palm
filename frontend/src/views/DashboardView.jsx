@@ -436,16 +436,16 @@ export default function DashboardView({ onUpload }) {
             >
                 <div className="w-full md:w-3/5 h-full rounded-2xl overflow-hidden shadow-lg border border-gray-200 relative bg-gray-100">
                     <div ref={mapRef} className="absolute inset-0">
-                        <MapContainer center={[3.2379, 101.6268]} zoom={12} maxZoom={12} className="w-full h-full" zoomControl={false}>
+                        <MapContainer center={[3.2379, 101.6268]} zoom={12} maxZoom={18} className="w-full h-full" zoomControl={false}>
                             <TileLayer
                                 url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                                 crossOrigin="anonymous"
-                                maxZoom={12}
+                                maxZoom={18}
                             />
                             <TileLayer
                                 url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
                                 crossOrigin="anonymous"
-                                maxZoom={12}
+                                maxZoom={18}
                             />
 
                             <ZoomController onReady={handleMapReady} />

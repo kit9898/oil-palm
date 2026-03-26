@@ -52,10 +52,10 @@ def main():
     # We force a conversion here to ensure the max_detections limit of 10000 is applied,
     # even if the model was already saved as an inference model with a lower limit.
     try:
-        print("Ensuring model is configured for high-capacity detection (max_detections=10000)...")
+        print("Ensuring model is configured for high-capacity detection (max_detections=10000, nms_threshold=0.30)...")
         # Attempt to convert to ensure the limit is set. 
         # If it's already an inference model, we try to rebuild it from the base layers.
-        model = models.convert_model(model, max_detections=10000)
+        model = models.convert_model(model, max_detections=10000, nms_threshold=0.30)
     except Exception as e:
         print(f"Warning during model conversion: {e}")
         print("Proceeding with existing model configuration...")
